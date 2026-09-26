@@ -1,0 +1,780 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Workforce Attendance & Payroll API",
+    "version": "0.1.0",
+    "description": "FastAPI backend contract for workforce attendance, leave, overtime and payroll."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Root"
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health"
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees": {
+      "get": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "List employees",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employees",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Employee"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees/{employee_id}": {
+      "get": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Get employee",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/v1/sites": {
+      "get": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "List sites",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Site"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{site_id}": {
+      "get": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "Get site",
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Site",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Site"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/punch": {
+      "post": {
+        "tags": [
+          "attendance"
+        ],
+        "summary": "Record QR punch",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PunchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attendance record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceRecord"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Persistence not implemented"
+          }
+        }
+      }
+    },
+    "/api/v1/attendance": {
+      "get": {
+        "tags": [
+          "attendance"
+        ],
+        "summary": "List attendance",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "employee_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "site_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "from_date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to_date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttendanceRecord"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/{attendance_id}/approve": {
+      "post": {
+        "tags": [
+          "attendance"
+        ],
+        "summary": "Approve attendance",
+        "parameters": [
+          {
+            "name": "attendance_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceRecord"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Persistence not implemented"
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/{attendance_id}/reject": {
+      "post": {
+        "tags": [
+          "attendance"
+        ],
+        "summary": "Reject attendance",
+        "parameters": [
+          {
+            "name": "attendance_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceRecord"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Persistence not implemented"
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/missing-punch-outs": {
+      "get": {
+        "tags": [
+          "attendance"
+        ],
+        "summary": "List missing punch-outs",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttendanceRecord"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/runs": {
+      "get": {
+        "tags": [
+          "payroll"
+        ],
+        "summary": "List payroll runs",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payroll runs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PayrollRun"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "payroll"
+        ],
+        "summary": "Create payroll run",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollRunRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payroll run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayrollRun"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/runs/{payroll_run_id}": {
+      "get": {
+        "tags": [
+          "payroll"
+        ],
+        "summary": "Get payroll run",
+        "parameters": [
+          {
+            "name": "payroll_run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payroll run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayrollRun"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/runs/{payroll_run_id}/finalize": {
+      "post": {
+        "tags": [
+          "payroll"
+        ],
+        "summary": "Finalize payroll run",
+        "parameters": [
+          {
+            "name": "payroll_run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payroll run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayrollRun"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Persistence not implemented"
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/employees/{employee_id}/salary-slips/{year}/{month}": {
+      "get": {
+        "tags": [
+          "payroll"
+        ],
+        "summary": "Get salary slip",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Salary slip"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "default": "bearer"
+          }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "employee_code",
+          "full_name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "organization_id": {
+            "type": "integer"
+          },
+          "employee_code": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Site": {
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "organization_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PunchRequest": {
+        "type": "object",
+        "required": [
+          "employee_id",
+          "site_id",
+          "occurred_at",
+          "qr_token"
+        ],
+        "properties": {
+          "employee_id": {
+            "type": "integer"
+          },
+          "site_id": {
+            "type": "integer"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qr_token": {
+            "type": "string"
+          }
+        }
+      },
+      "AttendanceRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "employee_id": {
+            "type": "integer"
+          },
+          "site_id": {
+            "type": "integer"
+          },
+          "work_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "punch_in": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "punch_out": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "worked_minutes": {
+            "type": "integer"
+          },
+          "overtime_minutes": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "approval_status": {
+            "type": "string"
+          }
+        }
+      },
+      "PayrollRunRequest": {
+        "type": "object",
+        "required": [
+          "organization_id",
+          "year",
+          "month"
+        ],
+        "properties": {
+          "organization_id": {
+            "type": "integer"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          }
+        }
+      },
+      "PayrollItem": {
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "integer"
+          },
+          "gross_salary": {
+            "type": "number"
+          },
+          "deduction_amount": {
+            "type": "number"
+          },
+          "overtime_amount": {
+            "type": "number"
+          },
+          "final_payable": {
+            "type": "number"
+          }
+        }
+      },
+      "PayrollRun": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "organization_id": {
+            "type": "integer"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "month": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayrollItem"
+            }
+          }
+        }
+      }
+    }
+  }
+}
