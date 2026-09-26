@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Workforce Attendance & Payroll API",
-    "version": "0.1.0",
-    "description": "FastAPI backend contract for workforce attendance, leave, overtime and payroll."
+    "version": "0.3.0",
+    "description": "FastAPI backend contract for workforce attendance, QR punch, approval and payroll."
   },
   "servers": [
     {
@@ -547,7 +547,15 @@
         ],
         "responses": {
           "200": {
-            "description": "Salary slip"
+            "description": "Salary slip PDF",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not found"
